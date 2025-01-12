@@ -2,9 +2,10 @@
 This repo will be used to house my documentation and all of the configurations and steps taken to get my home cluster up and running.
 
 The tools I plan to use are as follows:
-ArgoCD for cluster management
-Lens for monitoring and managing the cluster
-Cert-manager for certificate management within the cluster
+- ArgoCD for cluster management
+- Lens for monitoring and managing the cluster
+- Cert-manager for certificate management within the cluster
+- Helm for making Kubernetes manifests
 
 ## Step 1 - Getting my Raspberry Pi(s) online 
 This part is less related to the actual Kubernetes knowledge and more about getting your Pi off the ground so you can start utilizing it. To do this, I set up a Raspberry Pi 4, which is basically plug-and-play, and gave it a static IP through a reservation on my router
