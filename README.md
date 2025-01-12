@@ -51,7 +51,7 @@ As you can see in the output above, I also patched the service/argocd-server to 
 ```
 kubectl patch service argocd-server -n argocd --patch '{ "spec": { "type": "LoadBalancer", "loadBalancerIP": "192.168.68.64" } }'
 ```
-Now I can access ArgoCD from my normal PC with no need for a desktop on the Pi or a display hooked up to it.
+Now I can access ArgoCD from my normal PC just by going to the external IP at port 80 in a browser - with no need for a desktop on the Pi or a display hooked up to it.
 
 ## Step 5 - Getting Lens set up to monitor and modify my cluster
 As far as installing Lens, that can be done directly from their website and is very painless, just like getting a cluster set up - as you will see in a moment.
