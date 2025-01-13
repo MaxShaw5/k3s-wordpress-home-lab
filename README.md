@@ -54,6 +54,10 @@ kubectl patch service argocd-server -n argocd --patch '{ "spec": { "type": "Load
 ```
 Now I can access ArgoCD from my normal PC just by going to the external IP at port 80 in a browser - with no need for a desktop on the Pi or a display hooked up to it.
 
+When you get to the ArgoCD WebUI you will be met with a login prompt. The default username will be admin and you can find your password by running the following command 
+```
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+```
 ## Step 5 - Getting Lens set up to monitor and modify my cluster
 As far as installing Lens, that can be done directly from their website and is very painless, just like getting a cluster set up - as you will see in a moment.
 
