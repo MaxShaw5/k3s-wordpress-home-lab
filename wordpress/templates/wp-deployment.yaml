@@ -3,12 +3,12 @@ kind: Service
 metadata:
   name: {{ .Values.containers.name }}
   labels:
-    {{ .Values.labels }}
+    app: {{ .Values.labels.app }}
 spec:
   ports:
-    - port: 80
+    - port: {{ .Values.ports.containerPort }}
   selector:
-    {{ .Values.labels }}
+    app: {{ .Values.labels.app }}
     tier: frontend
   type: LoadBalancer
 ---
@@ -17,7 +17,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: wp-pv-claim
   labels:
-    {{ .Values.labels }}
+    app: {{ .Values.labels.app }}
 spec:
   accessModes:
     - ReadWriteOnce
@@ -30,19 +30,19 @@ kind: Deployment
 metadata:
   creationTimestamp: null
   labels:
-    {{ .Values.labels }}
+    app: {{ .Values.labels.app }}
   name: {{ .Values.containers.name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{ .Values.nodeSelector.matchLabels }}
+      kubernetes.io/hostname: {{ .Values.nodeLabels.kubernetes.io/hostname }}
   strategy: {}
   template:
     metadata:
       creationTimestamp: null
       labels:
-        {{ .Values.labels }}
+        app: {{ .Values.labels.app }}
     spec:
       containers:
       - image: {{ .Values.containers.image }}
@@ -59,12 +59,12 @@ spec:
           value: wordpress
         resources: {}
         ports:
-            - {{ .Values.ports.containerPort }}
+            - port: {{ .Values.ports.containerPort }}
         volumeMounts:
-        - {{ .Values.wp_deployment.volumes.name }}
+        - name: {{ .Values.wp_deployment.volumes.name }}
           mountPath: /var/www/html
       volumes:
-      - {{ .Values.wp_deployment.volumeMounts.name }}
+      - name: {{ .Values.wp_deployment.volumeMounts.name }}
         persistentVolumeClaim:
           claimName: wp-pv-claim
 
