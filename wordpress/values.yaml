@@ -1,0 +1,32 @@
+# Default values for wordpress.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
+replicaCount: 2
+
+nodeSelector:
+  matchLabels:
+    kubernetes.io/hostname: raspberrypi4
+
+labels:
+  app: wordpress
+
+ports:
+  containerPort: 443
+
+containers:
+  image: wordpress
+  name: wordpress
+
+wp_deployment: 
+  volumes:
+    name: wordpress-persistent-storage
+  volumeMounts:
+    name: wordpress-persistent-storage
+
+services:
+  wp_deployment:
+    type: LoadBalancer
+  mysql:
+    selector:
