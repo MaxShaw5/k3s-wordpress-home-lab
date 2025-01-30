@@ -147,6 +147,7 @@ Now, imagine a production environment where there can be substantially more vari
 Fortunately, Helm as an answer for that with the "- toYaml" operator which allows you to pass in entire sections of your values.yaml file to your deployment YAMLs. If I want to pass in the entire codeblock above, I can use something like this:
 
 ```
+env:
 {{- toYaml .Values.env.mysql | nindent 8 }}
 
 ```
