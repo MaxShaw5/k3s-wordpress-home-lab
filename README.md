@@ -6,6 +6,12 @@ The tools I plan to use are as follows:
 - Lens for monitoring and managing the cluster
 - Cert-manager for certificate management within the cluster
 - Helm for making Kubernetes manifests
+    - Helm Playground for quickly viewing Helm dry runs
+ 
+
+# Pre-Project Work and Set-Up
+
+
 
 ## Step 1 - Getting my Raspberry Pi(s) online 
 This part is less related to the actual Kubernetes knowledge and more about getting your Pi off the ground so you can start utilizing it. To do this, I set up a Raspberry Pi 4, which is basically plug-and-play, and gave it a static IP through a reservation on my router
@@ -88,3 +94,64 @@ users:
     client-key-data: redacted
 ```
 From there, you can open Lens, click Kubernetes Clusters > Local Kubeconfigs and click the plus button to the right of Local Kubeconfigs then find your txt file and you will be monitoring your cluster in real time with the ability to manipulate the resources within it. 
+
+
+# Actual Project Work - Creating Charts, Creating YAMLs, Running Pipelines 
+
+
+## Step 1 - Basic Chart Creation 
+
+First things first, we needed a very basic chart that contained the bare minimum for this Wordpress site to run. As I am new to Helm and self hosting in general, I wanted to see what this thing would need to run at a very basic level and be available on Local Host.
+
+I wanted to write the chart myself instead of taking a bitnami chart and changing values in the values.yaml file because I felt like I would learn more about how charts function by writing it from scratch.
+
+I went and found a very simple chart structure image. This is the one I found the most helpful: 
+
+![image](https://github.com/user-attachments/assets/e8ab9bd4-59d7-4f69-93b3-23295f6c2bf3)
+
+From here, I started creating my YAMLs with very basic deployments, services, volumes, and claims before I even started writing the values.yaml file so that I could see what the k8s side was going to look like before I started integrating Helm. There is also a basic Wordpress Deployment on the k8s docs that is almost exactly identical to what I have created that I referenced: https://kubernetes.io/docs/tutorials/stateful-application/mysql-wordpress-persistent-volume/
+
+After my YAMLs were complete in a boiler plate state and ready to go, I started working on the values.yaml and I wanted to make sure I was using it to the point of maybe even _overuse_ so that I really got a grasp of how passing in different values works.
+
+For some of the simple values I wrote them into the values file by themselves in just one line like so: 
+
+![image](https://github.com/user-attachments/assets/deeaec71-ce3c-4cc4-be19-08988498c177)
+
+I then referenced those values in the deployment YAMLs like so:
+
+![image](https://github.com/user-attachments/assets/e496bc56-f333-444d-8c19-3c4558fd16e3)
+
+This is extremely handy, intuitive, and intriguing _but_ I knew there had to be something to make this easier for larger sections like spec.cotainer.env where you can have very basic YAMLs that look like this:
+
+```
+env:
+  mysql:
+  - name: MYSQL_ROOT_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: mysql-pass
+        key: password
+  - name: MYSQL_DATABASE
+    value: wordpress
+  - name: MYSQL_USER
+    value: wordpress
+  - name: MYSQL_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: mysql-pass
+        key: password
+```
+
+Now, imagine a production environment where there can be substantially more variables.. Manually passing in those values one at a time would take ages.
+
+Fortunately, Helm as an answer for that with the "- toYaml" operator which allows you to pass in entire sections of your values.yaml file to your deployment YAMLs. If I want to pass in the entire codeblock above, I can use something like this:
+
+```
+{{- toYaml .Values.env.mysql | nindent 8 }}
+
+```
+As long as you have the proper amount of indentation, it will pass the entire section in for you and make your deployment much more readable.
+
+
+
+
