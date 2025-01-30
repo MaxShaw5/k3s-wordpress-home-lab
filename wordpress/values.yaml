@@ -5,27 +5,82 @@
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 2
 
+metadata:
+  wordpress:
+    name: wordpress
+  sql:
+    name: wordpress-mysql
+
 nodeLabels:
-  kubernetes.io/hostname: raspberrypi4
+  hostname: raspberrypi4
 
 labels:
   app: wordpress
 
 ports:
   containerPort: 443
+  sqlport: 3306
 
 containers:
-  image: wordpress
-  name: wordpress
+  wordpress:
+    image: wordpress
+    name: wordpress
+  mysql:
+      image: mysql:8.0
+      name: mysql
 
-wp_deployment: 
+wp_deployment_volumes: 
   volumes:
     name: wordpress-persistent-storage
+    persistentVolumeClaim:
+      claimName: wp-pv-claim
   volumeMounts:
     name: wordpress-persistent-storage
+    mountPath: /var/www/html
+
+
+mysql_deployment_volumes:
+  volumeMounts:
+  - name: mysql-persistent-storage
+    mountPath: /var/lib/mysql
+  volumes:
+  - name: mysql-persistent-storage
+    persistentVolumeClaim:
+     claimName: mysql-pv-claim
 
 services:
   wp_deployment:
     type: LoadBalancer
   mysql:
     selector:
+
+accessModes: ReadWriteOnce
+
+env:
+  mysql:
+  - name: MYSQL_ROOT_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: mysql-pass
+        key: password
+  - name: MYSQL_DATABASE
+    value: wordpress
+  - name: MYSQL_USER
+    value: wordpress
+  - name: MYSQL_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: mysql-pass
+        key: password
+  wordpress:
+    - name: WORDPRESS_DB_HOST
+      value: wordpress-mysql
+    - name: WORDPRESS_DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: mysql-pass
+          key: password
+    - name: WORDPRESS_DB_USER
+      value: wordpress
+
+  
