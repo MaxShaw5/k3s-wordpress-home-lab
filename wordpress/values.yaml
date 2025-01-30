@@ -83,4 +83,5 @@ env:
     - name: WORDPRESS_DB_USER
       value: wordpress
 
-  
+requests:
+  storage: 20Gi
