@@ -70,7 +70,7 @@ env:
   - name: MYSQL_PASSWORD
     valueFrom:
       secretKeyRef:
-        name: mysql-pass
+        name: mysql-pass-8cdkhkh8hd
         key: password
   wordpress:
     - name: WORDPRESS_DB_HOST
