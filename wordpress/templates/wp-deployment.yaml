@@ -11,6 +11,8 @@ spec:
   selector:
     app: {{ .Values.labels.app }}
     tier: frontend
+  externalIPs:
+  - {{ .Values.externalIPs.wordpress }}
   type: LoadBalancer
 ---
 apiVersion: v1

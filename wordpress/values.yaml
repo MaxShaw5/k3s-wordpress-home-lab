@@ -85,3 +85,6 @@ env:
 
 requests:
   storage: 20Gi
+
+externalIPs:
+  wordpress: "192.168.68.70"
