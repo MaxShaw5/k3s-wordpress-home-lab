@@ -52,7 +52,7 @@ spec:
           {{- toYaml .Values.env.wordpress | nindent 8 }}
         resources: {}
         ports:
-            - port: {{ .Values.ports.containerPort }}
+            - containerPort: {{ .Values.ports.containerPort }}
         volumeMounts:
         - name: {{ .Values.wp_deployment_volumes.volumeMounts.name }}
           mountPath: {{ .Values.wp_deployment_volumes.volumeMounts.mountPath }}
