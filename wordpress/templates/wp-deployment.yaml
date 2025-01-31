@@ -37,7 +37,7 @@ spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      kubernetes.io/hostname: {{ .Values.nodeLabels.hostname }}
+      app: {{ .Values.labels.app }}
   strategy: {}
   template:
     metadata:
