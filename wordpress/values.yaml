@@ -20,6 +20,8 @@ labels:
 ports:
   containerPort: 8443
   sqlport: 3306
+  targetPort: 8443
+  nodePort: 30005
 
 containers:
   wordpress:

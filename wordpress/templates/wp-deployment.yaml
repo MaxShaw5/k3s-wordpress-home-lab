@@ -8,10 +8,18 @@ metadata:
 spec:
   ports:
     - port: {{ .Values.ports.containerPort }}
+      nodePort: {{ .Values.ports.nodePort }}
+      targetPort: {{ .Values.ports.targetPort }}
   selector:
     app: {{ .Values.labels.app }}
     tier: frontend
   type: {{ .Values.service.wordpress.type }}
+  status:
+  loadBalancer:
+    ingress:
+    - ip: 192.168.68.64
+      ipMode: VIP
+
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
