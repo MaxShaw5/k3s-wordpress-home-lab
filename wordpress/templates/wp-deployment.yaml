@@ -11,7 +11,7 @@ spec:
       nodePort: {{ .Values.ports.nodePort }}
       targetPort: {{ .Values.ports.targetPort }}
   selector:
-    app: {{ .Values.labels.lb.app }}
+    app: {{ .Values.labels.app }}
     tier: frontend
   type: {{ .Values.service.wordpress.type }}
   status:
