@@ -15,9 +15,11 @@ nodeLabels:
   hostname: raspberrypi4
 
 labels:
-  app: wordpress
+  app: wp-app
   lb:
     app: wordpress-lb
+  sql:
+    app: wp-sql
 
 ports:
   containerPort: 8443

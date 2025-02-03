@@ -8,7 +8,7 @@ spec:
   ports:
     - port: {{ .Values.ports.sqlport }}
   selector:
-    app: {{ .Values.labels.app }}
+    app: {{ .Values.labels.sql.app }}
     tier: mysql
   clusterIP: None
 ---
@@ -30,7 +30,7 @@ kind: Deployment
 metadata:
   name: wordpress-mysql
   labels:
-    app: {{ .Values.labels.app }}
+    app: {{ .Values.labels.sql.app }}
 spec:
   selector:
     matchLabels:
@@ -41,7 +41,7 @@ spec:
   template:
     metadata:
       labels:
-        app: {{ .Values.labels.app }}
+        app: {{ .Values.labels.sql.app }}
         tier: mysql
     spec:
       containers:
