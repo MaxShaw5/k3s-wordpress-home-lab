@@ -34,7 +34,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: {{ .Values.labels.app }}
+      app: {{ .Values.labels.sql.app }}
       tier: mysql
   strategy:
     type: Recreate
