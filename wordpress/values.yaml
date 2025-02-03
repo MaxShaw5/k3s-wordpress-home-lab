@@ -16,6 +16,8 @@ nodeLabels:
 
 labels:
   app: wordpress
+  lb:
+    app: wordpress-lb
 
 ports:
   containerPort: 8443

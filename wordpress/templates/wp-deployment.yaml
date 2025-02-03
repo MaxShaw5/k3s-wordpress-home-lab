@@ -4,14 +4,14 @@ kind: Service
 metadata:
   name: {{ .Values.metadata.wordpress.name }}
   labels:
-    app: {{ .Values.labels.app }}
+    app: {{ .Values.labels.lb.app }}
 spec:
   ports:
     - port: {{ .Values.ports.containerPort }}
       nodePort: {{ .Values.ports.nodePort }}
       targetPort: {{ .Values.ports.targetPort }}
   selector:
-    app: {{ .Values.labels.app }}
+    app: {{ .Values.labels.lb.app }}
     tier: frontend
   type: {{ .Values.service.wordpress.type }}
   status:
