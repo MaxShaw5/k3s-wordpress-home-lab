@@ -20,6 +20,7 @@ labels:
 ports:
   containerPort: 443
   sqlport: 3306
+  nodePort: 30005
 
 containers:
   wordpress:
@@ -86,5 +87,6 @@ env:
 requests:
   storage: 20Gi
 
-externalIPs:
-  wordpress: "192.168.68.70"
+service:
+  wordpress:
+    type: NodePort
