@@ -8,8 +8,6 @@ metadata:
 spec:
   ports:
     - port: {{ .Values.ports.containerPort }}
-      targetPort: {{ .Values.ports.containerPort }}
-      nodePort: {{ .Values.ports.nodePort }}
   selector:
     app: {{ .Values.labels.app }}
     tier: frontend
