@@ -11,7 +11,7 @@ spec:
       nodePort: {{ .Values.ports.nodePort }}
       targetPort: {{ .Values.ports.targetPort }}
   selector:
-    app: {{ .Values.labels.app }}
+    app: {{ .Values.labels.sql.app }}
   type: {{ .Values.service.wordpress.type }}
   status:
   loadBalancer:
