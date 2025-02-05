@@ -12,7 +12,6 @@ spec:
       targetPort: {{ .Values.ports.targetPort }}
   selector:
     app: {{ .Values.labels.app }}
-    tier: frontend
   type: {{ .Values.service.wordpress.type }}
   status:
   loadBalancer:
