@@ -22,9 +22,9 @@ labels:
     app: wp-sql
 
 ports:
-  containerPort: 8443
+  containerPort: 8080
   sqlport: 3306
-  targetPort: 8443
+  targetPort: 80
   nodePort: 30005
 
 containers:
@@ -94,4 +94,4 @@ requests:
 
 service:
   wordpress:
-    type: LoadBalancer
+    type: NodePort
