@@ -99,6 +99,63 @@ From there, you can open Lens, click Kubernetes Clusters > Local Kubeconfigs and
 # Actual Project Work - Creating Charts, Creating YAMLs, Running Pipelines 
 
 
+### Step .5 - Creating a secret for the SQL DB
+
+You will need a secret for your database password.
+
+This can be done by simply running this block in your shell:
+
+```
+echo "your-password" | base64
+```
+
+and copying the output in the shell into a basic YAML that will look roughly like this:
+
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: demo-secret
+type: Opaque
+data:
+  password: <output-from-shell>
+```
+
+Now run a simple ```kubectl apply -f demo-secret.yaml```
+
+You can then pass this secret into your values.yaml so that your SQL database can use it - for example:
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: <no value>
+spec:
+  selector:
+    matchLabels:
+      app: <no value>
+      tier: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: <no value>
+        tier: mysql
+    spec:
+      containers:
+      - image: mysql:8.0
+        name: MySQL
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: password
+              name: demo-secret
+```
+
 ## Step 1 - Basic Chart Creation 
 
 First things first, we needed a very basic chart that contained the bare minimum for this Wordpress site to run. As I am new to Helm and self hosting in general, I wanted to see what this thing would need to run at a very basic level and be available on Local Host.
@@ -144,7 +201,7 @@ env:
 
 Now, imagine a production environment where there can be substantially more variables.. Manually passing in those values one at a time would take ages.
 
-Fortunately, Helm as an answer for that with the "- toYaml" operator which allows you to pass in entire sections of your values.yaml file to your deployment YAMLs. If I want to pass in the entire codeblock above, I can use something like this:
+Fortunately, Helm has an answer for that with the "- toYaml" operator which allows you to pass in entire sections of your values.yaml file to your deployment YAMLs. If I want to pass in the entire codeblock above, I can use something like this:
 
 ```
 env:
@@ -152,6 +209,39 @@ env:
 
 ```
 As long as you have the proper amount of indentation, it will pass the entire section in for you and make your deployment much more readable.
+
+
+## Step 2 - Getting The Deployments In Order And Confirming Access
+
+Alright, so I have my deployments, services, and volumes in my manifests and I think they are ready to go - now what?
+
+The answer to this was a simple one. Try it.
+
+I failed quite a few times.
+
+First things first, we need to clone this repo on the node itself and then package and install the chart. This is the easy part.
+
+I cloned the repo, did a simple ``` helm package . ``` in the same directory that housed my chart.yaml, values.yaml, and templates directory.
+
+From there you can simply do a ```helm install <desired-name-of-helm-deployment> <packaged-chart>.tgz``` and it will install your chart and deploy your resources.
+
+Once its all deployed, you can run some simple commands like  ```kubectl get pods``` and ```kubectl get services``` to confirm everything is up and running.
+
+Hopefully, you will see "running" on all your pods and all of your expected services will show when you query those.
+
+To confirm access to your wordpress deployment, the first thing to do should be checking your wordpress NodePort service to confirm that you have endpoints.
+
+This can be done with ```kubectl get endpoints wordpress```
+
+If you get an output - great! If there are no inputs, it's time to start debugging. Check and make sure your labels and selectors match up!
+
+In the event that you do get an output, try to curl the endpoint from the node ```curl -I <endpoint-IP>:<NodePort-from-service>``` (you can find your nodeport by doing ```kubectl get service```
+
+Your output should look something like this: ```wordpress         NodePort    10.43.75.98   <none>        8080:**30005**/TCP   74m```
+
+With a NodePort service, your WordPress site should be available on your local network.
+
+
 
 
 
