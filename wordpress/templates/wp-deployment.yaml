@@ -7,7 +7,7 @@ metadata:
     app: {{ .Values.labels.lb.app }}
 spec:
   ports:
-    - port: {{ .Values.ports.containerPort }}
+    - port: {{ .Values.ports.servicePort }}
       nodePort: {{ .Values.ports.nodePort }}
       targetPort: {{ .Values.ports.targetPort }}
   selector:

@@ -22,7 +22,8 @@ labels:
     app: wp-sql
 
 ports:
-  containerPort: 8080
+  servicePort: 8080
+  containerPort: 80
   sqlport: 3306
   targetPort: 80
   nodePort: 30005
