@@ -13,11 +13,7 @@ spec:
   selector:
     app: {{ .Values.labels.sql.app }}
   type: {{ .Values.service.wordpress.type }}
-  status:
-  loadBalancer:
-    ingress:
-    - ip: 100.72.1.24
-      ipMode: VIP
+  status: {}
 
 ---
 apiVersion: v1
