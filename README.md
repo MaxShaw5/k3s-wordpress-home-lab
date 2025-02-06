@@ -241,8 +241,7 @@ Your output should look something like this: ```wordpress         NodePort    10
 
 With a NodePort service, your WordPress site should be available on your local network.
 
-To actually visit your website from your local network, go to "http://<IP-of-node>:<NodePort-from-service>"
-
+To actually visit your website from your local network, go to ```http://<IP-of-node>:<NodePort-from-service>```
 
 
 
