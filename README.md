@@ -243,7 +243,51 @@ With a NodePort service, your WordPress site should be available on your local n
 
 To actually visit your website from your local network, go to ```http://<IP-of-node>:<NodePort-from-service>```
 
+## Step 3 - Setting up the Application in ArgoCD
 
 
+First things first, let's get a manifest created for the application. It'll look something like this:
+
+```
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wordpress    #This will be the name of your ArgoCD application
+  namespace: argocd  #This is the namespace that your ArgoCD install can be found in (this shouldnt need to be changed)
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://github.com/MaxShaw5/k3s-wordpress-home-lab.git    #This is your GitHub repo
+    targetRevision: HEAD #Branch of repo
+    path: wordpress #Make sure this leads to the directory where your chart.yaml and values.yaml files are
+    helm:
+      valueFiles:
+        - values.yaml #This should be named whatever your values.yaml files are named - if using multiple you can add them all here
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+```
+
+Now we want to apply that to the ArgoCD namespace in our cluster
+
+```kubectl apply -n argocd -f <argocd-application>.yaml```
+
+This should build the application within ArgoCD and you can confirm this by looking in the webUI to see if your application is there.
+
+Sync your application using ```argocd app sync wordpress --strategy=apply```
+
+You should now see your application in ArgoCD and it should be sync'd up and ready to start continuously deploying your revisions.
+
+![image](https://github.com/user-attachments/assets/9ea9d03d-537e-4ec6-8bd8-cc4ababcb1bf)
+
+
+To test the ArgoCD implementation, try changing something in one of your manifests - I chose to use the replicaCount.
+
+First, I did a ```kubectl get pods``` to see that I had 2 pods. Then, I changed the replica count of my wordpress deployment to 1 in my values.yaml file. From there, its a simple merge into main and then ArgoCD automatically updated my cluster and changed it to 1 replica which I confirmed by doing another ```kubectl get pods```
 
 
