@@ -235,7 +235,7 @@ This can be done with ```kubectl get endpoints wordpress```
 
 If you get an output - great! If there are no endpoints, it's time to start debugging. Check and make sure your labels and selectors match up!
 
-In the event that you do get an output, try to curl the endpoint from the node ```curl -I <endpoint-IP>:<NodePort-from-service>``` (you can find your nodeport by doing ```kubectl get service```
+In the event that you do get an output, try to curl the endpoint from the node ```curl -I <endpoint-IP>:<NodePort-from-service>``` (you can find your nodeport by doing ```kubectl get service```)
 
 Your output should look something like this: ```wordpress         NodePort    10.43.75.98   <none>        8080:**30005**/TCP   74m```
 
