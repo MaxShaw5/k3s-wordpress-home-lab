@@ -2,11 +2,11 @@
 This repo will be used to house my documentation and all of the configurations and steps taken to get my home cluster up and running.
 
 The tools I plan to use are as follows:
-- ArgoCD for cluster management
+- ArgoCD for continuous deployment of my cluster and seamless configuration updates and resource deployments
 - Lens for monitoring and managing the cluster
-- Cert-manager for certificate management within the cluster
 - Helm for making Kubernetes manifests
     - Helm Playground for quickly viewing Helm dry runs
+- More to come as I work through making this publicly available
  
 
 # Pre-Project Work and Set-Up
