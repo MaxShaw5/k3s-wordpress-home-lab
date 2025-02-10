@@ -96,7 +96,7 @@ users:
 From there, you can open Lens, click Kubernetes Clusters > Local Kubeconfigs and click the plus button to the right of Local Kubeconfigs then find your txt file and you will be monitoring your cluster in real time with the ability to manipulate the resources within it. 
 
 
-# Actual Project Work - Creating Charts, Creating YAMLs, Running Pipelines 
+# Foundational Project Work - Creating Charts, Creating YAMLs, Implementing ArgoCD
 
 
 ### Step .5 - Creating a secret for the SQL DB
@@ -290,4 +290,6 @@ To test the ArgoCD implementation, try changing something in one of your manifes
 
 First, I did a ```kubectl get pods``` to see that I had 2 pods. Then, I changed the replica count of my wordpress deployment to 1 in my values.yaml file. From there, its a simple merge into main and then ArgoCD automatically updated my cluster and changed it to 1 replica which I confirmed by doing another ```kubectl get pods```
 
+
+# Laying The Ground Work to Expose My Blog Over the Internet
 
