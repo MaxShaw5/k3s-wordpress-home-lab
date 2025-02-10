@@ -327,6 +327,6 @@ spec:
   serviceAccountName: system-upgrade
   upgrade:
     image: rancher/k3s-upgrade
-  version: v1.24.6+k3s1 # Remove this from the template and replace it with the following line
+  # version: v1.24.6+k3s1 # Remove this from the template and replace it with the following line if you want to automatically upgrade your distribution to the latest version
   channel: https://update.k3s.io/v1-release/channels/stable # Using this instead of version will allow your clutser to automatically upgrade to the latest stable version available
 ```
