@@ -293,3 +293,40 @@ First, I did a ```kubectl get pods``` to see that I had 2 pods. Then, I changed 
 
 # Laying The Ground Work to Expose My Blog Over the Internet
 
+## Keeping My Cluster Up To Date
+
+First, I wanted to make sure my cluster and all the resources within it were constantly up to date at all times to avoid falling victim to possible vulnerabilities in outdated versions.
+
+### Keeping k3s up to date
+
+I started with ensuring my node was on the latest version of K3s at all times.
+
+This can be done through a deployment that in the case of k3s is already pre built and available in their documentation.
+
+You can find it here: https://docs.k3s.io/upgrades/automated
+
+The only thing that you will need to change/create yourself is the YAML for the plan. They have a boiler plate available on that docs page as well.
+
+This is for the Master/Control-Plane
+```
+# Server plan
+apiVersion: upgrade.cattle.io/v1
+kind: Plan
+metadata:
+  name: server-plan
+  namespace: system-upgrade
+spec:
+  concurrency: 1
+  cordon: true
+  nodeSelector:
+    matchExpressions:
+    - key: node-role.kubernetes.io/control-plane
+      operator: In
+      values:
+      - "true"
+  serviceAccountName: system-upgrade
+  upgrade:
+    image: rancher/k3s-upgrade
+  version: v1.24.6+k3s1 # Remove this from the template and replace it with the following line
+  channel: https://update.k3s.io/v1-release/channels/stable # Using this instead of version will allow your clutser to automatically upgrade to the latest stable version available
+```
