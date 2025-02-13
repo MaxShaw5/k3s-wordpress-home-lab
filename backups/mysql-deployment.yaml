@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: {{ .Values.labels.app }}
+spec:
+  ports:
+    - port: {{ .Values.ports.sqlport }}
+  selector:
+    app: {{ .Values.labels.sql.app }}
+  clusterIP: None
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+  labels:
+    app: {{ .Values.labels.app }}
+spec:
+  accessModes:
+    - {{ .Values.accessModes }}
+  resources:
+    requests:
+      storage: {{ .Values.requests.storage }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress-mysql
+  labels:
+    app: {{ .Values.labels.sql.app }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.labels.sql.app }}
+      tier: mysql
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.labels.sql.app }}
+        tier: mysql
+    spec:
+      containers:
+      - image: {{ .Values.containers.mysql.image }}
+        name: {{ .Values.containers.mysql.name }}
+        env:
+        {{- toYaml .Values.env.mysql | nindent 8 }}
+        ports:
+        - containerPort: {{ .Values.ports.sqlport }}
+          name: mysql
+        volumeMounts:
+        {{- toYaml .Values.mysql_deployment_volumes.volumeMounts | nindent 8 }}
+      volumes:
+{{- toYaml .Values.mysql_deployment_volumes.volumes | nindent 8 }}

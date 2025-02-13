@@ -1,0 +1,67 @@
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.metadata.wordpress.name }}
+  labels:
+    app: {{ .Values.labels.lb.app }}
+spec:
+  ports:
+    - port: {{ .Values.ports.servicePort }}
+      nodePort: {{ .Values.ports.nodePort }}
+      targetPort: {{ .Values.ports.targetPort }}
+  selector:
+    app: {{ .Values.labels.app }}
+  type: {{ .Values.service.wordpress.type }}
+  status: {}
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.wp_deployment_volumes.volumes.persistentVolumeClaim.claimName }}
+  labels:
+    app: {{ .Values.labels.app }}
+spec:
+  accessModes:
+    - {{ .Values.accessModes }}
+  resources:
+    requests:
+      storage: {{ .Values.requests.storage }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: {{ .Values.labels.app }}
+  name: {{ .Values.metadata.wordpress.name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.labels.app }}
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: {{ .Values.labels.app }}
+    spec:
+      containers:
+      - image: {{ .Values.containers.wordpress.image }}
+        name: {{ .Values.containers.wordpress.name }}
+        env:
+          {{- toYaml .Values.env.wordpress | nindent 8 }}
+        resources: {}
+        ports:
+            - containerPort: {{ .Values.ports.containerPort }}
+        volumeMounts:
+        - name: {{ .Values.wp_deployment_volumes.volumeMounts.name }}
+          mountPath: {{ .Values.wp_deployment_volumes.volumeMounts.mountPath }}
+      volumes:
+      - name: {{ .Values.wp_deployment_volumes.volumeMounts.name }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.wp_deployment_volumes.volumes.persistentVolumeClaim.claimName }}
+         
+status: {}
