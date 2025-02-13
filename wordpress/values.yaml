@@ -22,7 +22,7 @@ labels:
     app: wp-sql
 
 ports:
-  servicePort: 80
+  servicePort: 8443
   containerPort: 443
   sqlport: 3306
   targetPort: 443
