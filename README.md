@@ -2,11 +2,11 @@
 This repo will be used to house my documentation and all of the configurations and steps taken to get my home cluster up and running.
 
 The tools I plan to use are as follows:
-- ArgoCD for cluster management
+- ArgoCD for continuous deployment of my cluster and seamless configuration updates and resource deployments
 - Lens for monitoring and managing the cluster
-- Cert-manager for certificate management within the cluster
 - Helm for making Kubernetes manifests
     - Helm Playground for quickly viewing Helm dry runs
+- More to come as I work through making this publicly available
  
 
 # Pre-Project Work and Set-Up
@@ -96,7 +96,7 @@ users:
 From there, you can open Lens, click Kubernetes Clusters > Local Kubeconfigs and click the plus button to the right of Local Kubeconfigs then find your txt file and you will be monitoring your cluster in real time with the ability to manipulate the resources within it. 
 
 
-# Actual Project Work - Creating Charts, Creating YAMLs, Running Pipelines 
+# Foundational Project Work - Creating Charts, Creating YAMLs, Implementing ArgoCD
 
 
 ### Step .5 - Creating a secret for the SQL DB
@@ -233,9 +233,9 @@ To confirm access to your wordpress deployment, the first thing to do should be 
 
 This can be done with ```kubectl get endpoints wordpress```
 
-If you get an output - great! If there are no inputs, it's time to start debugging. Check and make sure your labels and selectors match up!
+If you get an output - great! If there are no endpoints, it's time to start debugging. Check and make sure your labels and selectors match up!
 
-In the event that you do get an output, try to curl the endpoint from the node ```curl -I <endpoint-IP>:<NodePort-from-service>``` (you can find your nodeport by doing ```kubectl get service```
+In the event that you do get an output, try to curl the endpoint from the node ```curl -I <endpoint-IP>:<NodePort-from-service>``` (you can find your nodeport by doing ```kubectl get service```)
 
 Your output should look something like this: ```wordpress         NodePort    10.43.75.98   <none>        8080:**30005**/TCP   74m```
 
@@ -243,7 +243,90 @@ With a NodePort service, your WordPress site should be available on your local n
 
 To actually visit your website from your local network, go to ```http://<IP-of-node>:<NodePort-from-service>```
 
+## Step 3 - Setting up the Application in ArgoCD
 
 
+First things first, let's get a manifest created for the application. It'll look something like this:
+
+```
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wordpress    #This will be the name of your ArgoCD application
+  namespace: argocd  #This is the namespace that your ArgoCD install can be found in (this shouldnt need to be changed)
+spec:
+  destination:
+    namespace: default
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    repoURL: https://github.com/MaxShaw5/k3s-wordpress-home-lab.git    #This is your GitHub repo
+    targetRevision: HEAD #Branch of repo
+    path: wordpress #Make sure this leads to the directory where your chart.yaml and values.yaml files are
+    helm:
+      valueFiles:
+        - values.yaml #This should be named whatever your values.yaml files are named - if using multiple you can add them all here
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+```
+
+Now we want to apply that to the ArgoCD namespace in our cluster
+
+```kubectl apply -n argocd -f <argocd-application>.yaml```
+
+This should build the application within ArgoCD and you can confirm this by looking in the webUI to see if your application is there.
+
+Sync your application using ```argocd app sync wordpress --strategy=apply```
+
+You should now see your application in ArgoCD and it should be sync'd up and ready to start continuously deploying your revisions.
+
+![image](https://github.com/user-attachments/assets/9ea9d03d-537e-4ec6-8bd8-cc4ababcb1bf)
 
 
+To test the ArgoCD implementation, try changing something in one of your manifests - I chose to use the replicaCount.
+
+First, I did a ```kubectl get pods``` to see that I had 2 pods. Then, I changed the replica count of my wordpress deployment to 1 in my values.yaml file. From there, its a simple merge into main and then ArgoCD automatically updated my cluster and changed it to 1 replica which I confirmed by doing another ```kubectl get pods```
+
+
+# Laying The Ground Work to Expose My Blog Over the Internet
+
+## Keeping My Cluster Up To Date
+
+First, I wanted to make sure my cluster and all the resources within it were constantly up to date at all times to avoid falling victim to possible vulnerabilities in outdated versions.
+
+### Keeping k3s up to date
+
+I started with ensuring my node was on the latest version of K3s at all times.
+
+This can be done through a deployment that in the case of k3s is already pre built and available in their documentation.
+
+You can find it here: https://docs.k3s.io/upgrades/automated
+
+The only thing that you will need to change/create yourself is the YAML for the plan. They have a boiler plate available on that docs page as well.
+
+This is for the Master/Control-Plane
+```
+# Server plan
+apiVersion: upgrade.cattle.io/v1
+kind: Plan
+metadata:
+  name: server-plan
+  namespace: system-upgrade
+spec:
+  concurrency: 1
+  cordon: true
+  nodeSelector:
+    matchExpressions:
+    - key: node-role.kubernetes.io/control-plane
+      operator: In
+      values:
+      - "true"
+  serviceAccountName: system-upgrade
+  upgrade:
+    image: rancher/k3s-upgrade
+  # version: v1.24.6+k3s1 # Remove this from the template and replace it with the following line if you want to automatically upgrade your distribution to the latest version
+  channel: https://update.k3s.io/v1-release/channels/stable # Using this instead of version will allow your clutser to automatically upgrade to the latest stable version available
+```
