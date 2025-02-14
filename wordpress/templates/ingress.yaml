@@ -6,6 +6,7 @@ metadata:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
 spec:
+  ingressClassName: traefik
   rules:
   - host: {{ .Values.ingress.host }}
     http:
@@ -16,7 +17,7 @@ spec:
           service:
             name: {{ .Values.service.wordpress.name }}
             port:
-              number: 443
+              number: 80
   tls:
   - hosts:
     - {{ .Values.ingress.host }}
