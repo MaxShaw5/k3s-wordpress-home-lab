@@ -9,6 +9,8 @@ spec:
   ports:
     - port: {{ .Values.ports.servicePort }}
       targetPort: {{ .Values.ports.targetPort }}
+    - port: {{ .Values.ports.http.port }}
+      targetPort: {{ .Values.ports.http.targetPort }}
   selector:
     app: {{ .Values.labels.app }}
   type: {{ .Values.service.wordpress.type }}
