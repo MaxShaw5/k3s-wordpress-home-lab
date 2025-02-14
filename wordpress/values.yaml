@@ -21,25 +21,12 @@ labels:
   sql:
     app: wp-sql
 
-ingress:
-  name: wordpress
-  host: maxshaw.online
-  tlsSecretName: wordpress-tls
-
-service:
-  wordpress:
-    type: ClusterIP
-    name: wordpress
-
 ports:
-  servicePort: 443
-  containerPort: 443
+  servicePort: 8080
+  containerPort: 80
   sqlport: 3306
-  targetPort: 443
+  targetPort: 80
   nodePort: 30005
-  http:
-    port: 80
-    targetPort: 80
 
 containers:
   wordpress:
@@ -106,4 +93,6 @@ env:
 requests:
   storage: 20Gi
 
-
+service:
+  wordpress:
+    type: NodePort
