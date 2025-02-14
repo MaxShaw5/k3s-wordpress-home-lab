@@ -32,10 +32,10 @@ service:
     name: wordpress
 
 ports:
-  servicePort: 80
-  containerPort: 80
+  servicePort: 443
+  containerPort: 443
   sqlport: 3306
-  targetPort: 80
+  targetPort: 443
   nodePort: 30005
 
 containers:
