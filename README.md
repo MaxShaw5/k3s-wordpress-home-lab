@@ -1,4 +1,9 @@
 # k3s-wordpress-home-lab
+
+Please also view the sister repository here: https://github.com/MaxShaw5/GKE-Wordpress-Cluster.git
+
+The repo above will be the final form of this project.
+
 This repo will be used to house my documentation and all of the configurations and steps taken to get my home cluster up and running.
 
 The tools I plan to use are as follows:
