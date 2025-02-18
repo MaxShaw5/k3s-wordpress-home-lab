@@ -296,9 +296,6 @@ To test the ArgoCD implementation, try changing something in one of your manifes
 
 First, I did a ```kubectl get pods``` to see that I had 2 pods. Then, I changed the replica count of my wordpress deployment to 1 in my values.yaml file. From there, its a simple merge into main and then ArgoCD automatically updated my cluster and changed it to 1 replica which I confirmed by doing another ```kubectl get pods```
 
-
-# Laying The Ground Work to Expose My Blog Over the Internet
-
 ## Keeping My Cluster Up To Date
 
 First, I wanted to make sure my cluster and all the resources within it were constantly up to date at all times to avoid falling victim to possible vulnerabilities in outdated versions.
